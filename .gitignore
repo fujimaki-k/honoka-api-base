@@ -1,0 +1,13 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Node.js
+node_modules/
+yarn.lock
+package-lock.json
+
+# honoka.io
+dest/
+template.json
+package.yml

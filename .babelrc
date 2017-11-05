@@ -1,0 +1,25 @@
+{
+    "env": {
+        "production": {
+            "comments": false,
+            "compact": false,
+            "minified": false,
+            "sourceMaps": false
+        },
+        "development": {
+            "comments": true,
+            "compact": false,
+            "minified": false,
+            "sourceMaps": true
+        }
+    },
+    "plugins": ["transform-runtime"],
+    "presets": [
+        ["@babel/env", {
+            "useBuiltIns": "usage",
+            "targets": {
+                "node": "6.10"
+            }
+        }]
+    ]
+}
