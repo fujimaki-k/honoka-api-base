@@ -13,6 +13,8 @@ const converter = require('../lib/converter/resources');
 // Export module
 module.exports = {
     AWSTemplateFormatVersion: '2010-09-09',
+    Parameters: {},
+    Conditions: {},
     Resources: converter({}, require('./resources'))
 };
 
