@@ -38,12 +38,7 @@ module.exports = {
                         'cognito-sync:*',
                         'cognito-identity:*'
                     ],
-                    Resource: [{
-                        'Fn::Join': ['/', [
-                            {'Fn::Sub': 'arn:aws:cognito-identity:${AWS::Region}:${AWS::AccountId}:identitypool'},
-                            {Ref: 'IdentityPool'}
-                        ]]
-                    }]
+                    Resource: [{'Fn::Sub': 'arn:aws:cognito-identity:${AWS::Region}:${AWS::AccountId}:identitypool/${IdentityPool}'}]
                 }, {
                     Effect: 'Allow',
                     Action: ['execute-api:Invoke'],

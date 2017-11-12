@@ -45,9 +45,7 @@ module.exports = {
                         'dynamodb:Scan',
                         'dynamodb:UpdateItem'
                     ],
-                    Resource: [{
-                        'Fn::Sub': 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*'
-                    }]
+                    Resource: [{'Fn::Sub': 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*'}]
                 }, {
                     Effect: 'Allow',
                     Action: [
@@ -58,18 +56,10 @@ module.exports = {
                         's3:ListAllMyBuckets',
                         's3:PutObject'
                     ],
-                    Resource: [{
-                        'Fn::Join': ['', [
-                            'arn:aws:s3:::',
-                            {Ref: 'BucketDocuments'}
-                        ]]
-                    }, {
-                        'Fn::Join': ['', [
-                            'arn:aws:s3:::',
-                            {Ref: 'BucketDocuments'},
-                            '/*'
-                        ]]
-                    }]
+                    Resource: [
+                        {'Fn::Sub': 'arn:aws:s3:::${BucketDocuments}'},
+                        {'Fn::Sub': 'arn:aws:s3:::${BucketDocuments}/*'}
+                    ]
                 }]
             }
         }],

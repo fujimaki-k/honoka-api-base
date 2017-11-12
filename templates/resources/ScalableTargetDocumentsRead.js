@@ -11,14 +11,12 @@ module.exports = {
     Properties: {
         MaxCapacity: 10,
         MinCapacity: 1,
-        ResourceId: {
-            'Fn::Join': ['/', [
-                'table',
-                {Ref: 'TableDocuments'}
-            ]]
-        },
+        ResourceId: {'Fn::Sub': 'table/${TableDocuments}'},
         RoleARN: {
-            'Fn::GetAtt': ['RoleAutoscaling', 'Arn']
+            'Fn::GetAtt': [
+                'RoleAutoscaling',
+                'Arn'
+            ]
         },
         ScalableDimension: 'dynamodb:table:ReadCapacityUnits',
         ServiceNamespace: 'dynamodb'
