@@ -57,12 +57,12 @@ module.exports = {
                     Resource: [{
                         'Fn::Join': ['', [
                             'arn:aws:s3:::',
-                            {Ref: 'Bucket'}
+                            {Ref: 'BucketDocuments'}
                         ]]
                     }, {
                         'Fn::Join': ['', [
                             'arn:aws:s3:::',
-                            {Ref: 'Bucket'},
+                            {Ref: 'BucketDocuments'},
                             '/*'
                         ]]
                     }]
