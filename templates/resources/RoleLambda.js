@@ -60,6 +60,10 @@ module.exports = {
                         {'Fn::Sub': 'arn:aws:s3:::${BucketDocuments}'},
                         {'Fn::Sub': 'arn:aws:s3:::${BucketDocuments}/*'}
                     ]
+                }, {
+                    Effect: 'Allow',
+                    Action: ['sns:Publish'],
+                    Resource: [{'Fn::Sub': 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'}]
                 }]
             }
         }],
