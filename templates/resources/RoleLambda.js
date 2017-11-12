@@ -64,6 +64,24 @@ module.exports = {
                     Effect: 'Allow',
                     Action: ['sns:Publish'],
                     Resource: [{'Fn::Sub': 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'}]
+                }, {
+                    Effect: 'Allow',
+                    Action: [
+                        'sqs:ReceiveMessage',
+                        'sqs:SendMessage',
+                        'sqs:SendMessageBatch'
+                    ],
+                    Resource: [{
+                        'Fn::GetAtt': [
+                            'Queue',
+                            'Arn'
+                        ]
+                    }, {
+                        'Fn::GetAtt': [
+                            'QueueDeadLetter',
+                            'Arn'
+                        ]
+                    }]
                 }]
             }
         }],
