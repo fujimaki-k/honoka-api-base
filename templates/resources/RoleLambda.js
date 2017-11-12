@@ -33,6 +33,10 @@ module.exports = {
                     Resource: ['arn:aws:logs:*:*:*']
                 }, {
                     Effect: 'Allow',
+                    Action: ['lambda:InvokeFunction'],
+                    Resource: [{'Fn::Sub': 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*'}]
+                }, {
+                    Effect: 'Allow',
                     Action: [
                         'dynamodb:DeleteItem',
                         'dynamodb:GetItem',
