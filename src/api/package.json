@@ -1,0 +1,30 @@
+{
+    "name": "@honoka.io/api",
+    "version": "0.1.0",
+    "description": "honoka.io JSON-RPC 2.0 API",
+    "homepage": "https://www.honoka.io/",
+    "license": "MIT",
+    "author": "Kazuma Fujimaki <honoka@honoka.io>",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fujimakishouten/honoka.io.git"
+    },
+    "scripts": {
+        "cobertura": "./node_modules/.bin/istanbul cover --report cobertura ./node_modules/mocha/bin/_mocha ./test",
+        "coverage": "./node_modules/.bin/istanbul cover --report html ./node_modules/mocha/bin/_mocha ./test",
+        "test": "./node_modules/.bin/mocha ./test"
+    },
+    "dependencies": {
+        "karmia-lambda-jsonrpc": ">=0.3.1"
+    },
+    "devDependencies": {
+        "eslint": "^4.18.1",
+        "expect.js": ">=0.3.1",
+        "istanbul": ">=1.1.0-alpha.1",
+        "mocha": ">=5.0.1"
+    },
+    "engines": {
+        "node": ">=4.0.0"
+    }
+}
