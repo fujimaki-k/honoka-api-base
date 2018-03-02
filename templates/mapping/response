@@ -1,0 +1,11 @@
+#set($result = $input.json('$.body.result'))
+{
+    #if($util.parseJson($result).isEmpty())
+        "error": $input.json('$.body.error'),
+    #else
+        "result": $result,
+    #end
+    "id": "$input.json('$.body.id')"
+}
+
+
