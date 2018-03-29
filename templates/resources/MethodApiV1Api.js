@@ -29,11 +29,11 @@ module.exports = {
             IntegrationResponses: [{
                 StatusCode: 200,
                 ResponseTemplates: {
-                    'application/json': fs.readFileSync(path.resolve(__dirname, '../mapping/response')).toString('UTF-8')
+                    'application/json': fs.readFileSync(path.resolve(__dirname, '../mapping/JSONResponse')).toString('UTF-8')
                 }
             }],
             RequestTemplates: {
-                'application/json': fs.readFileSync(path.resolve(__dirname, '../mapping/request')).toString('UTF-8')
+                'application/json': fs.readFileSync(path.resolve(__dirname, '../mapping/JSONRequest')).toString('UTF-8')
             }
         },
         MethodResponses: [{
