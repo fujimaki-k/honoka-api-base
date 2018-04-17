@@ -1,5 +1,5 @@
 {
-    "name": "honoka.io",
+    "name": "honoka-api",
     "version": "0.1.0",
     "description": "Open source serverless markdown notepad.",
     "homepage": "https://www.honoka.io/",
@@ -8,10 +8,12 @@
     "main": "index.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/fujimakishouten/honoka.io.git"
+        "url": "https://github.com/honokaio/honoka-api.git"
     },
     "scripts": {
-        "babel": "make",
+        "babel": "make babel",
+        "typescript": "make typescript",
+        "tsc": "npm run typescript",
         "build": "make && make install",
         "clean": "make clean && rm -f package.yml",
         "template": "node -e \"console.log(JSON.stringify(require('./templates'), null, 4));\" > template.json",
@@ -20,14 +22,16 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "@babel/cli": ">=7.0.0-beta.40",
-        "@babel/core": ">=7.0.0-beta.40",
-        "@babel/preset-env": ">=7.0.0-beta.40",
-        "@babel/plugin-transform-runtime": ">=7.0.0-beta.40",
-        "babel-loader": ">=8.0.0-beta.0",
-        "typescript": ">=2.7.2"
+        "@babel/cli": "^7.0.0-beta.44",
+        "@babel/core": "^7.0.0-beta.44",
+        "@babel/preset-env": "^7.0.0-beta.44",
+        "@babel/plugin-transform-runtime": "^7.0.0-beta.44",
+        "@types/aws-sdk": "^2.7.0",
+        "@types/node": "^9.6.5",
+        "typescript": "^2.8.1",
+        "tslint": "^5.9.1"
     },
     "engines": {
-        "node": ">=7.6.0"
+        "node": "8.10.0"
     }
 }

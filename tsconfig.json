@@ -11,10 +11,7 @@
         "preserveConstEnums": true,
         "pretty": true,
         "removeComments": false,
-        "rootDir": "./src",
         "sourceMap": false
     },
-    "exclude": ["node_modules"],
     "include": ["./src/**/*"]
-
 }
