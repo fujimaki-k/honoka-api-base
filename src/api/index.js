@@ -13,19 +13,19 @@ jsonrpc.methods.set(require('./lib/method'));
 
 
 // Export hander
-exports.handler = async (event, context, callback) => {
+exports.handler = async (event, context) => {
     try {
-        callback(null, await jsonrpc.call(event, context, event.body));
+        return jsonrpc.call(event, context, event.body);
     } catch (error) {
-        callback(JSON.stringify({
-            jsonrpc: '2.0',
+        return Promise.reject({
+            jsonrpc: "2.0",
             error: {
                 code: -32603,
-                message: 'Internal error',
+                message: "Internal error",
                 data: error
             },
-            id: event.body.id 
-        }));
+            id: event.body.id
+        });
     }
 };
 
