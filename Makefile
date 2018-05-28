@@ -8,6 +8,7 @@ define build
 	$(eval BUILD_DIRECTORY = $(subst $(SOURCE), $(DESTINATION), $1))
 	$(eval TARGET = $(notdir $(BUILD_DIRECTORY)))
 	@cp $1/package.json $(BUILD_DIRECTORY)
+	$(shell if [ -e $1/test/mocha.opts ]; then cp $1/test/mocha.opts $(BUILD_DIRECTORY)/test/mocha.opts; fi;)
 
 	@echo "\n"
 	@echo "--- Build: $(TARGET) ---"
@@ -33,7 +34,7 @@ babel: $(SOURCES)
 typescript: $(SOURCES)
 	./node_modules/.bin/tsc
 
-.PHONY: clean
+.PHONY: install
 install: $(SOURCES)
 	$(foreach DIRECTORY, $(SOURCES), $(call build, $(DIRECTORY)))
 
