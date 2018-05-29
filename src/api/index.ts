@@ -14,33 +14,52 @@ import Services = require("./lib/service");
 import Methods = require("./lib/method");
 
 
-// Variables
-const default_config: {[index: string]: any} = require(path.resolve(__dirname, "./config/default"));
-const jsonrpc = new KarmiaLambdaJSONRPC();
-const utility = new KarmiaUtility();
-jsonrpc.set('service', Services);
-jsonrpc.methods.set(Methods);
-jsonrpc.set('utility', utility);
-
-
 // Declarations
 declare interface Parameters {
     [index: string]: any;
 }
 
+/**
+ * Load config parameters
+ *
+ * @param {string} stage
+ * @param {object} [default_parameters = {}]
+ */
+const load_config = (stage: string, default_parameters={}) => {
+    try {
+      const   stage_config = require(path.resolve(__dirname, 'config', stage));
+
+      return utility.object.mergeProperties(default_parameters, stage_config);
+    } catch (error) {
+        if (error.code === 'MODULE_NOT_FOUND') {
+            return default_parameters;
+        }
+
+        throw error;
+    }
+};
+
+
+// Variables
+const default_config = require(path.resolve(__dirname, "./config/default"));
+const jsonrpc = new KarmiaLambdaJSONRPC();
+const utility = new KarmiaUtility();
+jsonrpc.set('utility', utility);
+jsonrpc.set('service', Services);
+jsonrpc.methods.set(Methods);
+
 
 // Export hander
 exports.handler = async (event: Parameters, context: Parameters): Promise<any> => {
     try {
-        const stage_config = require(path.resolve(__dirname, `./config/${event.stage}`));
-        const config = utility.object.mergeProperties(default_config, stage_config);
+        const config = load_config(event.stage, default_config);
         config.aws = config.aws || {};
         config.aws.global = config.aws.global || {};
         config.aws.global.region = config.aws.global.region || 'ap-northeast-1';
 
         AWS.config.update(config.aws.global);
-        jsonrpc.set('config', config);
         jsonrpc.set('aws', AWS);
+        jsonrpc.set('config', config);
 
         return jsonrpc.call(event, context, event.body);
     } catch (error) {

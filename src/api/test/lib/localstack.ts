@@ -138,8 +138,8 @@ class DynamoDB {
      * @param {Object} parameter
      * @returns {Promise}
      */
-    fixture(parameter: AWS.DynamoDB.DocumentClient.UpdateItemInput): Promise<any> {
-        return this.client.update(parameter).promise();
+    fixture(parameter: AWS.DynamoDB.DocumentClient.PutItemInput): Promise<any> {
+        return this.client.put(parameter).promise();
     }
 }
 
