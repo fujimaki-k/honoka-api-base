@@ -5,8 +5,14 @@
 
 
 
+// Import modules
+import DynamoDB = require("./dynamodb");
+
+
 // Export module
-export = {};
+export = {
+    dynamodb: DynamoDB
+};
 
 
 
