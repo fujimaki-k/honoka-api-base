@@ -23,8 +23,14 @@ interface FixtureObject {
 
 
 // Variables
-const schema_directory = path.resolve(__dirname, "../../../../templates/resources");
+let initialized = false;
+const schema_directory = path.resolve(__dirname, "../../../../../templates/resources");
 const fixture_directory = path.resolve(__dirname, "../fixture");
+
+AWS.config.update({region: "ap-north-east1"});
+AWS.config.setPromisesDependency(Promise);
+const localstack = new LocalStack(AWS);
+
 
 // Load schema and fixtures
 const schema: SchemaObject = fs.readdirSync(schema_directory).reduce((collection: {[index: string]: any}, value: string) => {
@@ -55,10 +61,16 @@ const fixtures: FixtureObject = fs.readdirSync(fixture_directory).reduce((collec
 
 
 // Export module
-export = (localstack: LocalStack) => {
-    return Promise.all(Object.keys(schema).map((key) => {
-        return localstack.dynamodb.schema(key, schema[key]);
-    })).then(() => {
+export = () => {
+    if (initialized) {
+        return Promise.resolve(localstack);
+    }
+
+    return localstack.start().then(() => {
+        return Promise.all(Object.keys(schema).map((key) => {
+            return localstack.dynamodb.schema(key, schema[key]);
+        }));
+    }).then(() => {
         return Promise.all(Object.keys(fixtures).map((key) => {
             return fixtures[key].reduce((collection, fixture) => {
                 return collection.then(() => {
@@ -66,6 +78,10 @@ export = (localstack: LocalStack) => {
                 });
             }, Promise.resolve());
         }));
+    }).then(() => {
+        initialized = true;
+
+        return Promise.resolve(localstack);
     });
 }
 

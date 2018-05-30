@@ -20,7 +20,7 @@ interface Options {
 }
 
 class LocalStack {
-    private aws = AWS;
+    public aws = AWS;
     private localstack: child_process.ChildProcess;
 
     public docker = "/usr/bin/docker";
@@ -46,10 +46,18 @@ class LocalStack {
     /**
      * Start LocalStack
      *
-     * @returns {Promise<void>}
+     * @returns {Promise}
      */
-    start() {
+    start(): Promise<void> {
+        if (this.localstack) {
+            return Promise.resolve();
+        }
+
         return new Promise((resolve) => {
+            if (this.localstack) {
+                return resolve();
+            }
+
             this.localstack = child_process.spawn(this.docker, this.arguments);
             this.localstack.stdout.on("data", (data) => {
                 data.toString().split(/\r\n|\r|\n/).forEach((line) => {
@@ -78,7 +86,7 @@ class LocalStack {
      *
      * @returns {Promise<void>}
      */
-    stop() {
+    stop(): Promise<void> {
         this.localstack.kill("SIGTERM");
 
         return Promise.resolve();
