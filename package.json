@@ -20,18 +20,20 @@
         "template": "node -e \"console.log(JSON.stringify(require('./templates'), null, 4));\" > template.json",
         "package": "aws cloudformation package --template-file template.json --output-template-file package.yml --s3-bucket functions.honoka.io",
         "deploy": "aws cloudformation deploy --template-file package.yml --stack-name honoka --capabilities CAPABILITY_NAMED_IAM",
-        "test": "npm run build && npm --prefix ./dest run test"
+        "test": "npm run build && npm --prefix ./dest/api run test"
     },
     "dependencies": {},
     "devDependencies": {
-        "@babel/cli": "^7.0.0-beta.44",
-        "@babel/core": "^7.0.0-beta.44",
-        "@babel/preset-env": "^7.0.0-beta.44",
-        "@babel/plugin-transform-runtime": "^7.0.0-beta.44",
-        "@types/aws-sdk": "^2.7.0",
-        "@types/node": "^9.6.5",
-        "typescript": "^2.8.1",
-        "tslint": "^5.9.1"
+        "@babel/cli": "^7.0.0-beta.49",
+        "@babel/core": "^7.0.0-beta.49",
+        "@babel/preset-env": "^7.0.0-beta.49",
+        "@babel/plugin-transform-runtime": "^7.0.0-beta.49",
+        "@types/expect.js": "^0.3.29",
+        "@types/mocha": "^5.2.0",
+        "@types/node": "^10.3.0",
+        "expect.js": "^0.3.1",
+        "typescript": "^2.9.1",
+        "tslint": "^5.10.0"
     },
     "engines": {
         "node": "8.10.0"

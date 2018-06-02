@@ -12,7 +12,7 @@ import AWS = require("aws-sdk");
 
 // Variables
 const command = 'docker inspect --format "{{.NetworkSettings.IPAddress}}" localstack';
-AWS.config.setPromisesDependency(Promise);
+
 
 // Declaration
 interface Options {
@@ -33,6 +33,8 @@ class LocalStack {
     public ports: {[index: string]: number} = {};
 
     public dynamodb: DynamoDB;
+    public s3: S3;
+
 
     /**
      * Constructor
@@ -73,6 +75,10 @@ class LocalStack {
                         this.host = this.host || child_process.execSync(command).toString().trim();
 
                         this.dynamodb = new DynamoDB(`http://${this.host}:${this.ports.DynamoDB}`, this.aws);
+                        this.s3 = new S3({
+                            endpoint: `http://${this.host}:${this.ports.S3}`,
+                            s3ForcePathStyle: true
+                        }, this.aws);
 
                         resolve();
                     }
@@ -124,17 +130,16 @@ class DynamoDB {
     /**
      * Create table
      *
-     * @param {string} name
      * @param {Object} parameters
      * @returns {Promise}
      */
-    schema(name: string, parameters: AWS.DynamoDB.CreateTableInput): Promise<any> {
-        if (this.schemas[name]) {
+    schema(parameters: AWS.DynamoDB.CreateTableInput): Promise<any> {
+        if (this.schemas[parameters.TableName]) {
             return Promise.resolve();
         }
 
         return this.dynamodb.createTable(parameters).promise().then((result) => {
-            this.schemas[name] = parameters;
+            this.schemas[parameters.TableName] = parameters;
 
             return Promise.resolve(result);
         });
@@ -148,6 +153,55 @@ class DynamoDB {
      */
     fixture(parameter: AWS.DynamoDB.DocumentClient.PutItemInput): Promise<any> {
         return this.client.put(parameter).promise();
+    }
+}
+
+class S3 {
+    public aws = AWS;
+    public s3: AWS.S3;
+
+    public url: string = "http://localhost:4572";
+    public buckets: {[index: string]: any} = {};
+
+    /**
+     *
+     * @param {Options | string} options
+     * @param {AWS} aws
+     */
+    constructor(options: Options|string = {}, aws = AWS) {
+        this.aws = aws;
+        options = (typeof options === "object") ? options : {
+            endpoint: options
+        };
+        this.url = options.endpoint || this.url;
+
+        const parameters = {
+            endpoint: this.url
+        };
+        this.s3 = new this.aws.S3(Object.assign(options, parameters));
+    }
+
+    /**
+     * Create bucket
+     *
+     * @param {Object} parameters
+     * @returns {Promise}
+     */
+    bucket(parameters: {[index: string]: any}): Promise<any> {
+        const name = parameters.Bucket || parameters.BucketName;
+        const acl = parameters.ACL || parameters.AccessControl || "public_read";
+        if (this.buckets[name]) {
+            return Promise.resolve();
+        }
+
+        return this.s3.createBucket({
+            Bucket: name,
+            ACL: acl.toLocaleLowerCase()
+        }).promise().then((result) => {
+            this.buckets[name] = parameters;
+
+            return Promise.resolve(result);
+        });
     }
 }
 
