@@ -16,11 +16,11 @@
         "test": "./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test"
     },
     "dependencies": {
-        "@babel/runtime": "^7.0.0-beta.49",
-        "aws-sdk": "^2.249.1",
+        "@babel/runtime": "^7.0.0-beta.51",
+        "aws-sdk": "^2.266.1",
         "karmia-lambda-jsonrpc": "^0.5.8",
-        "karmia-utility": "^0.11.7",
-        "karmia-utility-object": "^0.3.4"
+        "karmia-utility": "^0.12.0",
+        "karmia-utility-object": "^0.4.1"
     },
     "devDependencies": {
         "istanbul": "^1.1.0-alpha.1",

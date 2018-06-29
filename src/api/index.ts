@@ -6,10 +6,10 @@
 
 
 // Import module
+import KarmiaUtility from "karmia-utility";
 import path = require("path");
 import AWS = require("aws-sdk");
 import KarmiaLambdaJSONRPC = require("karmia-lambda-jsonrpc");
-import KarmiaUtility = require("karmia-utility");
 import Services = require("./lib/service");
 import Methods = require("./lib/method");
 

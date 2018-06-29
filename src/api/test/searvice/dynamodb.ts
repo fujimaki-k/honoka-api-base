@@ -7,6 +7,7 @@
 // Import modules
 import expect = require("expect.js");
 import DynamoDB = require("../../lib/service/dynamodb");
+import {describe, it} from "mocha";
 
 
 // Parameters
@@ -35,6 +36,7 @@ describe("service", () => {
                         const result = DynamoDB.buildUpdateParameter(parameters);
 
                         expect(result).to.eql({
+                            TableName: "",
                             Key: {},
                             ExpressionAttributeNames: {
                                 "#id": "id",
@@ -79,6 +81,7 @@ describe("service", () => {
                         key_object[keys] = parameters[keys];
 
                         expect(result).to.eql({
+                            TableName: "",
                             Key: key_object,
                             ExpressionAttributeNames: {
                                 "#name": "name",
@@ -122,6 +125,7 @@ describe("service", () => {
                         }, {});
 
                         expect(result).to.eql({
+                            TableName: "",
                             Key: key_object,
                             ExpressionAttributeNames: {
                                 "#name": "name",
@@ -160,6 +164,7 @@ describe("service", () => {
                         const result = DynamoDB.buildUpdateParameter(parameters, keys);
 
                         expect(result).to.eql({
+                            TableName: "",
                             Key: keys,
                             ExpressionAttributeNames: {
                                 "#name": "name",
@@ -232,6 +237,39 @@ describe("service", () => {
                             UpdateExpression: "SET #name = :name, #age = :age, #birthday = :birthday, "
                             + "#constellation = :constellation, #blood_type = :blood_type, #height = :height, "
                             + "#bust = :bust, #waist = :waist, #hip = :hip, #like = :like, #dislike = :dislike"
+                        });
+                    });
+                });
+            });
+        });
+
+        describe("buildQueryParameter", () => {
+            describe("Should build query parameter", () => {
+                describe("Keys only", () => {
+                    it("Object key", () => {
+                        const keys = {"id": parameters.id};
+                        const result = DynamoDB.buildQueryParameter(keys);
+
+                        expect(result).to.eql({
+                            TableName: "",
+                            ExpressionAttributeNames: {"#id": "id"},
+                            ExpressionAttributeValues: {":id": 1},
+                            KeyConditionExpression: "#id = :id"
+                        });
+                    });
+                });
+
+                describe("Keys and options", () => {
+                    it("Object key", () => {
+                        const keys = {"id": parameters.id};
+                        const options = {TableName: "profile"};
+                        const result = DynamoDB.buildQueryParameter(keys, options);
+
+                        expect(result).to.eql({
+                            TableName: options.TableName,
+                            ExpressionAttributeNames: {"#id": "id"},
+                            ExpressionAttributeValues: {":id": 1},
+                            KeyConditionExpression: "#id = :id"
                         });
                     });
                 });

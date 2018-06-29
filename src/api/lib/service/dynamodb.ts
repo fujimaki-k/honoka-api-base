@@ -5,20 +5,36 @@
 
 
 
-// Export module
-export = {
+// Declaration
+declare interface Keys {
+    [index: string]: any
+}
+
+declare interface Options {
+    [index: string]: any
+}
+
+declare interface Expression {
+    TableName?: string,
+    Key?: {[index: string]: any},
+    ExpressionAttributeNames: {[index: string]: string},
+    ExpressionAttributeValues: {[index: string]: any},
+    Expression: Array<string>|string
+}
+
+
+class DynamoDB {
     /**
-     * Generate DocumentClient.update() parameter.
+     * Build key parameter
      *
      * @param {Object} parameters
-     * @param {Array<string> | string | {Object}} [keys = {}]
-     * @param {Object} [options = {}]
+     * @param {Array|string|Object} keys
      * @returns {Object}
      */
-    buildUpdateParameter(parameters: {[index: string]: any}, keys: Array<string>|string|{}={}, options={}) {
+    static keys (parameters: {[index: string]: any}, keys: Array<string>|string|Keys): Keys {
         keys = (typeof keys === "string") ? [keys] : keys;
         if (Array.isArray(keys)) {
-            keys = keys.reduce((collection: {[index: string]: any}, key: string) => {
+            return keys.reduce((collection: {[index: string]: any}, key: string) => {
                 if (key in parameters) {
                     collection[key] = parameters[key];
                 }
@@ -27,27 +43,86 @@ export = {
             }, {});
         }
 
-        const result = Object.keys(parameters).reduce((collection: {[index: string]: any}, key: string) => {
-            if (key in collection.Key) {
+        return keys;
+    }
+
+    /**
+     * Build expression
+     *
+     * @param {Object} parameters
+     * @param {Array|Object} excludes
+     * @returns {Object}
+     */
+    static expression (parameters: {[index: string]: any}|Keys, excludes: Array<string>|Keys): Expression {
+        const keys = Array.isArray(excludes) ? excludes.reduce((collection: {[index: string]: number}, key: string) => {
+            collection[key] = 1;
+
+            return collection;
+        }, {}) : excludes;
+
+        const result = Object.keys(parameters).reduce((collection: Expression, key: string) => {
+            if (key in keys) {
                 return collection;
             }
 
             collection.ExpressionAttributeNames[`#${key}`] = key;
             collection.ExpressionAttributeValues[`:${key}`] = parameters[key];
-            collection.UpdateExpression.push(`#${key} = :${key}`);
+            (collection.Expression as Array<string>).push(`#${key} = :${key}`);
 
             return collection;
         }, {
-            Key: keys,
             ExpressionAttributeNames: {},
             ExpressionAttributeValues: {},
-            UpdateExpression: []
+            Expression: []
         });
-        result.UpdateExpression = `SET ${result.UpdateExpression.join(", ")}`;
+        result.Expression = `${(result.Expression as Array<string>).join(", ")}`;
 
-        return Object.assign(result, options);
+        return result;
     }
-};
+
+    /**
+     * Generate DocumentClient.query() parameter
+     *
+     * @param {Object} keys
+     * @param {Options} [options = {}]
+     * @returns {Object}
+     */
+    static buildQueryParameter(keys: Keys={}, options: Options={}) {
+        const expression = DynamoDB.expression(keys, {});
+
+        return Object.assign({
+            TableName: options.TableName || "",
+            ExpressionAttributeNames: expression.ExpressionAttributeNames,
+            ExpressionAttributeValues: expression.ExpressionAttributeValues,
+            KeyConditionExpression: expression.Expression as string
+        }, options);
+    }
+
+    /**
+     * Generate DocumentClient.update() parameter
+     *
+     * @param {Object} parameters
+     * @param {Array|string|Object} [keys = {}]
+     * @param {Object} [options = {}]
+     * @returns {Object}
+     */
+    static buildUpdateParameter(parameters: {[index: string]: any}, keys: Array<string>|string|{}={}, options: Options={}) {
+        const key = DynamoDB.keys(parameters, keys);
+        const expression = DynamoDB.expression(parameters, key);
+
+        return Object.assign({
+            TableName: options.TableName || "",
+            Key: key,
+            ExpressionAttributeNames: expression.ExpressionAttributeNames,
+            ExpressionAttributeValues: expression.ExpressionAttributeValues,
+            UpdateExpression: `SET ${expression.Expression}`
+        }, options);
+    }
+}
+
+
+// Export module
+export = DynamoDB;
 
 
 
@@ -58,4 +133,3 @@ export = {
  * c-hanging-comment-ender-p: nil
  * End:
  */
- 

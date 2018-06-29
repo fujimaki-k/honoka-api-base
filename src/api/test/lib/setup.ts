@@ -12,39 +12,62 @@ import AWS = require("aws-sdk");
 import LocalStack = require("./localstack");
 
 
+// Environment
+const project_directory = path.resolve(__dirname, "../../../../");
+const api_directory = path.resolve(project_directory, "./src/api");
+const test_directory = path.resolve(api_directory, "./test");
+
+
 // Variables
 let initialized = false;
-const resource_directory = path.resolve(__dirname, "../../../../templates/resources");
-const fixture_directory = path.resolve(__dirname, "../fixture");
+let resources: {[index: string]: any};
+let fixtures: {[index: string]: any};
+const resource_directory = path.resolve(project_directory, "./templates/resources");
+const fixture_directory = path.resolve(test_directory, "./fixture");
 
 AWS.config.update({region: "ap-northeast-1"});
 AWS.config.setPromisesDependency(Promise);
 const localstack = new LocalStack(AWS);
 
 
-// Load resources and fixtures
-const resources: {[index: string]: any} = fs.readdirSync(resource_directory).reduce((collection: {[index: string]: any}, filename: string) => {
-    const extension = path.extname(filename);
-    if (extension !== ".js") {
+// Load AWS resources
+try {
+    resources = fs.readdirSync(resource_directory).reduce((collection: {[index: string]: any}, filename: string) => {
+        const extension = path.extname(filename);
+        if (extension !== ".js") {
+            return collection;
+        }
+
+        const basename = filename.replace(extension, "");
+        collection[basename] = require(path.resolve(resource_directory, filename));
+
         return collection;
+    }, {});
+} catch (error) {
+    if (error.code !== "NOENT") {
+        throw error;
     }
+}
 
-    const basename = filename.replace(extension, "");
-    collection[basename] = require(path.resolve(resource_directory, filename));
 
-    return collection;
-}, {});
-const fixtures: {[index: string]: any} = fs.readdirSync(fixture_directory).reduce((collection: {[index: string]: any}, filename: string) => {
-    const extension = path.extname(filename);
-    if (extension !== ".js") {
+// Load fixtures
+try {
+    fixtures = fs.readdirSync(fixture_directory).reduce((collection: {[index: string]: any}, filename: string) => {
+        const extension = path.extname(filename);
+        if (extension !== ".js") {
+            return collection;
+        }
+
+        const basename = filename.replace(extension, "");
+        collection[basename] = require(path.resolve(fixture_directory, basename));
+
         return collection;
+    }, {});
+} catch (error) {
+    if (error.code !== "NOENT") {
+        throw error;
     }
-
-    const basename = filename.replace(extension, "");
-    collection[basename] = require(path.resolve(fixture_directory, basename));
-
-    return collection;
-}, {});
+}
 
 
 // Export modules
