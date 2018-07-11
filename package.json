@@ -20,7 +20,8 @@
         "template": "node -e \"console.log(JSON.stringify(require('./templates'), null, 4));\" > template.json",
         "package": "aws cloudformation package --template-file template.json --output-template-file package.yml --s3-bucket functions.honoka.io",
         "deploy": "aws cloudformation deploy --template-file package.yml --stack-name honoka --capabilities CAPABILITY_NAMED_IAM",
-        "test": "npm run build && npm --prefix ./dest/api run test"
+        "test": "npm run test:v1",
+        "test:v1": "npm run build && npm --prefix ./dest/v1/api run test"
     },
     "dependencies": {},
     "devDependencies": {

@@ -1,6 +1,6 @@
 SOURCE := src
 DESTINATION := dest
-SOURCES := $(wildcard $(SOURCE)/*)
+SOURCES := $(wildcard $(SOURCE)/*/*)
 JAVASCRIPTS := $(shell find $(SOURCE) -iname *.js | grep -v node_modules)
 TYPESCRIPTS := $(shell find $(SOURCE) -iname *.ts | grep -v node_modules)
 

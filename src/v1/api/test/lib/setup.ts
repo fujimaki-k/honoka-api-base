@@ -13,8 +13,8 @@ import LocalStack = require("./localstack");
 
 
 // Environment
-const project_directory = path.resolve(__dirname, "../../../../");
-const api_directory = path.resolve(project_directory, "./src/api");
+const project_directory = path.resolve(__dirname, "../../../../../");
+const api_directory = path.resolve(__dirname.replace("/dest/", "/src/"), "../../");
 const test_directory = path.resolve(api_directory, "./test");
 
 
